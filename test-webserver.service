@@ -1,0 +1,13 @@
+[Unit]
+Description= Go Web Service Test
+After=network.target
+
+[Service]
+ExecStart=/home/vu/Documents/code/test-webserver/test-webserver
+WorkingDirectory=/home/vu/Documents/code/test-webserver/
+Restart=always
+User=nobody
+Group=nogroup
+LimitNOFILE=infinity
+[Install]
+WantedBy=multi-user.target
