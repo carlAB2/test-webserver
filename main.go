@@ -112,5 +112,5 @@ func setCookie(w http.ResponseWriter, r *http.Request) {
 func deleteCookie(w http.ResponseWriter, r *http.Request) {
 	printLog(r)
 	cookie_key := r.URL.Query().Get("cookie_key")
-	w.Header().Set("Set-Cookie", cookie_key+"=; Max-Age=-1")
+	w.Header().Set("Set-Cookie", cookie_key+"=deleted; Max-Age=-1")
 }
