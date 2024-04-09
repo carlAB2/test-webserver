@@ -106,12 +106,12 @@ func echoCookie(w http.ResponseWriter, r *http.Request) {
 func setCookie(w http.ResponseWriter, r *http.Request) {
 	printLog(r)
 	cookieKey := r.URL.Query().Get("cookie_key")
-	setCookie := cookieKey + "=; Max-Age=-1"
+	setCookie := cookieKey + "=cookie_value; expires = Thu, 01 Jan 2025 00:00:00 GMT"
 	w.Header().Set("Set-Cookie", setCookie)
 }
 
 func deleteCookie(w http.ResponseWriter, r *http.Request) {
 	printLog(r)
 	cookie_key := r.URL.Query().Get("cookie_key")
-	w.Header().Set("Set-Cookie", cookie_key+"=deleted; expires = Thu, 01 Jan 1970 00:00:00 GMT")
+	w.Header().Set("Set-Cookie", cookie_key+"=; Max-Age=-1")
 }
