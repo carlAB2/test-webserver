@@ -89,7 +89,7 @@ func readFile(filePath string) ([]byte, error) {
 		1. 在chrome浏览器的开发者工具中，在Application->Cookies中添加一个cookie
 		2. 然后访问http://swt.isanyier.top:8080/cookie/echo_cookie，查看是否能够获取到刚刚添加的cookie
 	测试点2：源站响应Set-Cookie头部，chrome浏览器是否会自动保存cookie
-		1. 访问http://swt.isanyier.top:8080/cookie/set_cookie?cookie_str=cookie
+		1. 访问http://swt.isanyier.top:8080/cookie/set_cookie?cookie_key=key&path=path&domain=domain
 		2. 在chrome浏览器的开发者工具中，在Application->Cookies中查看是否有对应的cookie
 	测试点3：通过set-cookie头部删除指定cookie
 		1. 访问http://swt.isanyier.top:8080/cookie/delete_cookie?cookie_key=key
@@ -106,10 +106,25 @@ func echoCookie(w http.ResponseWriter, r *http.Request) {
 	printCookie(w, r)
 }
 
+func getSetCookieOtherAttrStr(r *http.Request) string {
+	setCookieOthAttrStr := ""
+	cookiePath := r.URL.Query().Get("path")
+	if cookiePath != "" {
+		setCookieOthAttrStr += "; path=" + cookiePath
+	}
+	cookieDomain := r.URL.Query().Get("domain")
+	if cookieDomain != "" {
+		setCookieOthAttrStr += "; domain=" + cookieDomain
+	}
+	return setCookieOthAttrStr
+
+}
+
 func setCookie(w http.ResponseWriter, r *http.Request) {
 	printLog(r)
 	cookieKey := r.URL.Query().Get("cookie_key")
 	setCookie := cookieKey + "=cookie_value; expires = Thu, 01 Jan 2025 00:00:00 GMT"
+	setCookie += getSetCookieOtherAttrStr(r)
 	w.Header().Set("Set-Cookie", setCookie)
 	printCookie(w, r)
 }
@@ -117,6 +132,8 @@ func setCookie(w http.ResponseWriter, r *http.Request) {
 func deleteCookie(w http.ResponseWriter, r *http.Request) {
 	printLog(r)
 	cookie_key := r.URL.Query().Get("cookie_key")
-	w.Header().Set("Set-Cookie", cookie_key+"=; Max-Age=-1")
+	setCookie := cookie_key + "=; Max-Age=-1"
+	setCookie += getSetCookieOtherAttrStr(r)
+	w.Header().Set("Set-Cookie", setCookie)
 	printCookie(w, r)
 }
