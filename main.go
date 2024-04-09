@@ -106,7 +106,7 @@ func echoCookie(w http.ResponseWriter, r *http.Request) {
 func setCookie(w http.ResponseWriter, r *http.Request) {
 	printLog(r)
 	cookieKey := r.URL.Query().Get("cookie_key")
-	setCookie := cookieKey + "=cookie_value; Max-Age=-1"
+	setCookie := cookieKey + "=; Max-Age=-1"
 	w.Header().Set("Set-Cookie", setCookie)
 }
 
