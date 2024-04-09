@@ -96,14 +96,14 @@ func readFile(filePath string) ([]byte, error) {
 		2. 在chrome浏览器的开发者工具中，在Application->Cookies中查看是否有key的cookie
 */
 
-func printCookie(r *http.Request) {
+func printCookie(w http.ResponseWriter, r *http.Request) {
 	cookie := r.Header.Values("cookie")
-	fmt.Println("Cookie:", cookie)
+	fmt.Fprintf(w, "Cookie: %s\n", cookie)
 }
 
 func echoCookie(w http.ResponseWriter, r *http.Request) {
 	printLog(r)
-	printCookie(r)
+	printCookie(w, r)
 }
 
 func setCookie(w http.ResponseWriter, r *http.Request) {
@@ -111,12 +111,12 @@ func setCookie(w http.ResponseWriter, r *http.Request) {
 	cookieKey := r.URL.Query().Get("cookie_key")
 	setCookie := cookieKey + "=cookie_value; expires = Thu, 01 Jan 2025 00:00:00 GMT"
 	w.Header().Set("Set-Cookie", setCookie)
-	printCookie(r)
+	printCookie(w, r)
 }
 
 func deleteCookie(w http.ResponseWriter, r *http.Request) {
 	printLog(r)
 	cookie_key := r.URL.Query().Get("cookie_key")
 	w.Header().Set("Set-Cookie", cookie_key+"=; Max-Age=-1")
-	printCookie(r)
+	printCookie(w, r)
 }
