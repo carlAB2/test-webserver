@@ -116,8 +116,20 @@ func getSetCookieOtherAttrStr(r *http.Request) string {
 	if cookieDomain != "" {
 		setCookieOthAttrStr += "; domain=" + cookieDomain
 	}
-	return setCookieOthAttrStr
+	cookieSameSite := r.URL.Query().Get("samesite")
+	if cookieSameSite != "" {
+		setCookieOthAttrStr += "; SameSite=" + cookieSameSite
+	}
+	cookieSecure := r.URL.Query().Get("secure")
+	if cookieSecure != "" {
+		setCookieOthAttrStr += "; Secure"
+	}
+	cookieHttpOnly := r.URL.Query().Get("httponly")
+	if cookieHttpOnly != "" {
+		setCookieOthAttrStr += "; HttpOnly"
+	}
 
+	return setCookieOthAttrStr
 }
 
 func setCookie(w http.ResponseWriter, r *http.Request) {
