@@ -6,13 +6,17 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
+	"strings"
 )
 
 func main() {
+	http.HandleFunc("/", root)
 	http.HandleFunc("/fs/", fileServer)
 	http.HandleFunc("/cookie/echo_cookie", echoCookie)
 	http.HandleFunc("/cookie/set_cookie", setCookie)
 	http.HandleFunc("/cookie/delete_cookie", deleteCookie)
+	http.HandleFunc("/error_code/", handleErrorCode)
 
 	go func() {
 		fmt.Println("HTTP server is running on :8080")
@@ -31,6 +35,10 @@ func main() {
 	}()
 
 	select {}
+}
+
+func root(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Hello, World!")
 }
 
 func printLog(r *http.Request) {
@@ -148,4 +156,22 @@ func deleteCookie(w http.ResponseWriter, r *http.Request) {
 	setCookie += getSetCookieOtherAttrStr(r)
 	w.Header().Set("Set-Cookie", setCookie)
 	printCookie(w, r)
+}
+
+func handleErrorCode(w http.ResponseWriter, r *http.Request) {
+	path := r.URL.Path
+	parts := strings.Split(path, "/")
+	if len(parts) != 3 {
+		http.Error(w, "Invalid path", http.StatusBadRequest)
+		return
+	}
+
+	code, err := strconv.Atoi(parts[2])
+	if err != nil {
+		http.Error(w, "Invalid status code", http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(code)
+	fmt.Fprintf(w, "origin server error code %d response page", code)
 }
