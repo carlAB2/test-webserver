@@ -38,6 +38,7 @@ func main() {
 }
 
 func root(w http.ResponseWriter, r *http.Request) {
+	printLog(r)
 	fmt.Fprintf(w, "Hello, World!")
 }
 
