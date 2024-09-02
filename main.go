@@ -28,7 +28,7 @@ func main() {
 
 	go func() {
 		fmt.Println("HTTPS server is running on :8443")
-		err := http.ListenAndServeTLS(":8443", "./certificate/fullchain.pem", "./certificate/privkey.pem", nil)
+		err := http.ListenAndServeTLS(":8443", "./certificate/fullchain1.pem", "./certificate/privkey1.pem", nil)
 		if err != nil {
 			fmt.Println(err)
 		}
