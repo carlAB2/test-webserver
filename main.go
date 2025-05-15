@@ -37,9 +37,40 @@ func main() {
 	select {}
 }
 
+func getClientIP(r *http.Request) string {
+    // Check for X-Forwarded-For header first (for clients behind proxy)
+    xForwardedFor := r.Header.Get("X-Forwarded-For")
+    if xForwardedFor != "" {
+        // X-Forwarded-For can contain multiple IPs (client, proxies)
+        // The leftmost IP is the original client
+        ips := strings.Split(xForwardedFor, ",")
+        return strings.TrimSpace(ips[0])
+    }
+    
+    // Check for X-Real-IP header (often added by proxies)
+    xRealIP := r.Header.Get("X-Real-IP")
+    if xRealIP != "" {
+        return xRealIP
+    }
+    
+    // Get IP from RemoteAddr as fallback
+    // RemoteAddr is in format "IP:port", so we need to remove the port
+    ip := r.RemoteAddr
+    if colonIndex := strings.LastIndex(ip, ":"); colonIndex != -1 {
+        ip = ip[:colonIndex]
+    }
+    
+    // Remove brackets if IPv6
+    ip = strings.TrimPrefix(ip, "[")
+    ip = strings.TrimSuffix(ip, "]")
+    
+    return ip
+}
+
 func root(w http.ResponseWriter, r *http.Request) {
 	printLog(r)
-	fmt.Fprintf(w, "Hello, World!")
+	clientIP := getClientIP(r)
+    fmt.Fprintf(w, "Hello, World! Your IP address is: %s", clientIP)
 }
 
 func printLog(r *http.Request) {
